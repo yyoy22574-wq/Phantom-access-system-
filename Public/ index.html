@@ -28,8 +28,8 @@ input:focus{border-color:var(--lime)}.primary{border:0;border-radius:10px;paddin
 <header><div class="brand">PHAN<span>TOM</span></div><div class="status"><i class="dot"></i> LIVE API WHEN HOSTED</div></header>
 <section><div class="eyebrow">PLAYER CONFIGURATION / IOS</div><h1>Fine-tune your<br>game settings.</h1><p class="sub">Validate your access key, then copy your sensitivity settings for manual use in the game's official settings.</p></section>
 <section class="panel">
-<div class="tabs"><button class="tab active" id="accessTab">ACCESS KEY</button><button class="tab" id="settingsTab">SENSITIVITY</button></div>
-<div id="accessPane"><label for="key">ENTER ACCESS KEY</label><div class="inputrow"><input id="key" type="text" placeholder="PH-... " autocomplete="off"><button class="primary" id="unlock">UNLOCK</button></div><div id="keyMessage" class="message" role="status"></div><p class="note">Access is enabled only when the server confirms the key is valid and has not expired or been revoked.</p></div>
+<div class="tabs"><button class="tab active" id="settingsTab">SENSITIVITY</button></div>
+<div id="accessPane" class="hidden"><label for="key">ENTER ACCESS KEY</label><div class="inputrow"><input id="key" type="text" placeholder="PH-... " autocomplete="off"><button class="primary" id="unlock">UNLOCK</button></div><div id="keyMessage" class="message" role="status"></div><p class="note">Access is enabled only when the server confirms the key is valid and has not expired or been revoked.</p></div>
 <div id="settingsPane"><div id="settingsList"></div><button class="primary copy" id="copy">COPY SETTINGS</button><div id="copyMessage" class="message" role="status"></div><p class="note">Starting values only; adjust in small steps for your comfort.</p></div>
 </section>
 <section class="panel hidden" id="adminPane">
@@ -49,9 +49,8 @@ const list=document.getElementById("settingsList");
 settings.forEach(([name,value],i)=>{const row=document.createElement("div");row.className="setting";row.innerHTML=`<div class="setting-top"><label for="range${i}">${name.toUpperCase()}</label><span class="value" id="val${i}">${value}</span></div><input id="range${i}" type="range" min="0" max="200" value="${value}"><div class="range-labels"><span>0</span><span>100</span><span>200</span></div>`;list.append(row);row.querySelector("input").addEventListener("input",e=>document.getElementById("val"+i).textContent=e.target.value)});
 const $=id=>document.getElementById(id);
 function message(id,text,good=false){const el=$(id);el.className="message show "+(good?"good":"bad");el.textContent=text}
-function pane(access){$("accessPane").classList.toggle("hidden",!access);$("settingsPane").classList.toggle("hidden",access);$("accessTab").classList.toggle("active",access);$("settingsTab").classList.toggle("active",!access)}
-$("accessTab").onclick=()=>pane(true);
-$("settingsTab").onclick=()=>{if(sessionStorage.getItem("phantomAccess")==="ok")pane(false);else{pane(true);message("keyMessage","Validate an active access key before opening settings.")}};
+
+
 $("unlock").onclick=async()=>{const key=$("key").value.trim();if(!key){message("keyMessage","Please enter your access key.");return}try{const r=await fetch("/api/validate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({key})});const d=await r.json();if(d.ok){sessionStorage.setItem("phantomAccess","ok");message("keyMessage","Access granted. Expires: "+new Date(d.expiresAt).toLocaleString(),true);pane(false)}else{sessionStorage.removeItem("phantomAccess");message("keyMessage",d.message||"Access denied.")}}catch{message("keyMessage","Cannot reach the server. Host and start the backend first.")}};
 $("copy").onclick=async()=>{const output=settings.map(([name],i)=>`${name}: ${$("range"+i).value}`).join("\n");try{await navigator.clipboard.writeText(output);message("copyMessage","Settings copied to clipboard.",true)}catch{message("copyMessage",output,true)}};
 $("adminLogin").onclick=async()=>{const pw=$("adminPassword").value;if(!pw){message("adminMessage","Enter the admin password.");return}sessionStorage.setItem("phantomAdmin",pw);try{const r=await fetch("/api/admin/keys",{headers:{Authorization:"Bearer "+pw}});const d=await r.json();if(!r.ok)throw Error("Password rejected or server unavailable.");$("adminTools").classList.remove("hidden");message("adminMessage","Admin connected.",true);await loadKeys()}catch(e){sessionStorage.removeItem("phantomAdmin");message("adminMessage",e.message)}};
