@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PHANTOM — Sensitivity Panel</title>
+<style>
+:root{--lime:#e8ff3b;--bg:#090909;--panel:#151515;--muted:#a3a3a3;--line:#303030}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f5f5f5;font:15px system-ui,-apple-system,sans-serif}
+main{width:min(100% - 28px,560px);margin:0 auto;padding:28px 0 36px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px}
+.brand{font-size:22px;font-weight:950;letter-spacing:.14em}.brand span{color:var(--lime)}
+.status{font-size:10px;letter-spacing:.1em;color:#aaa}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#a6f65b;margin-right:6px}
+.eyebrow{font-size:10px;letter-spacing:.22em;color:var(--lime);font-weight:800;margin-bottom:12px}
+h1{font-size:34px;line-height:1.05;letter-spacing:-.05em;margin:0 0 12px}.sub{font-size:13px;line-height:1.65;color:var(--muted);margin:0}
+.panel{border:1px solid var(--line);background:linear-gradient(145deg,#171717,#101010);border-radius:18px;padding:20px;margin-top:22px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#090909;padding:5px;border:1px solid #292929;border-radius:12px;margin-bottom:20px}
+button{cursor:pointer;font:inherit}.tab{border:0;border-radius:8px;padding:12px 8px;color:#888;background:transparent;font-size:11px;font-weight:800;letter-spacing:.08em}.tab.active,.primary{background:var(--lime);color:#111}
+label{display:block;font-size:11px;font-weight:750;letter-spacing:.05em;margin:0 0 9px;color:#ddd}
+.inputrow{display:flex;gap:8px}input[type=text],input[type=password],input[type=number]{width:100%;min-width:0;background:#090909;border:1px solid #343434;border-radius:10px;padding:14px 12px;color:#fff;outline:none;font-size:13px}
+input:focus{border-color:var(--lime)}.primary{border:0;border-radius:10px;padding:0 17px;font-size:11px;font-weight:900;letter-spacing:.06em}.note{font-size:11px;color:#858585;line-height:1.6;margin-top:12px}
+.message{display:none;margin-top:12px;padding:11px 12px;border-radius:9px;font-size:12px;line-height:1.5;overflow-wrap:anywhere}.message.show{display:block}.bad{color:#ffb6b6;background:#321b1b;border:1px solid #5b2929}.good{color:#d9ff9d;background:#1c2a12;border:1px solid #354d22}
+.setting{padding:13px 0;border-bottom:1px solid #292929}.setting:last-child{border-bottom:0}.setting-top{display:flex;justify-content:space-between;margin-bottom:11px}.setting-top label{margin:0}.value{color:var(--lime);font-size:13px;font-weight:850}input[type=range]{width:100%;accent-color:var(--lime)}.range-labels{display:flex;justify-content:space-between;color:#6d6d6d;font-size:9px;margin-top:5px}
+.copy{width:100%;padding:15px;margin-top:17px}.hidden{display:none!important}.smallprint{text-align:center;font-size:10px;color:#6f6f6f;line-height:1.6;margin-top:16px}footer{display:flex;justify-content:space-between;gap:12px;color:#666;font-size:9px;letter-spacing:.1em;margin-top:24px}
+.admin-grid{display:grid;grid-template-columns:1fr 110px;gap:8px;margin-top:12px}.keyrow{border-top:1px solid #292929;padding:13px 0;font-size:12px;overflow-wrap:anywhere}.keyrow small{display:block;color:#888;line-height:1.6;margin:4px 0}.revoke{padding:8px 10px;border:1px solid #6b3434;background:#281414;color:#ffb5b5;border-radius:8px;font-size:10px}
+@media(max-width:420px){.panel{padding:15px}h1{font-size:31px}.brand{font-size:19px}}
+</style></head>
+<body><main>
+<header><div class="brand">PHAN<span>TOM</span></div><div class="status"><i class="dot"></i> LIVE API WHEN HOSTED</div></header>
+<section><div class="eyebrow">PLAYER CONFIGURATION / IOS</div><h1>Fine-tune your<br>game settings.</h1><p class="sub">Validate your access key, then copy your sensitivity settings for manual use in the game's official settings.</p></section>
+<section class="panel">
+<div class="tabs"><button class="tab active" id="accessTab">ACCESS KEY</button><button class="tab" id="settingsTab">SENSITIVITY</button></div>
+<div id="accessPane"><label for="key">ENTER ACCESS KEY</label><div class="inputrow"><input id="key" type="text" placeholder="PH-... " autocomplete="off"><button class="primary" id="unlock">UNLOCK</button></div><div id="keyMessage" class="message" role="status"></div><p class="note">Access is enabled only when the server confirms the key is valid and has not expired or been revoked.</p></div>
+<div id="settingsPane" class="hidden"><div id="settingsList"></div><button class="primary copy" id="copy">COPY SETTINGS</button><div id="copyMessage" class="message" role="status"></div><p class="note">Starting values only; adjust in small steps for your comfort.</p></div>
+</section>
+<section class="panel hidden" id="adminPane">
+<div class="eyebrow">ADMIN / KEY MANAGEMENT</div><h2 style="margin:0 0 10px;font-size:20px">Create access keys</h2>
+<label for="adminPassword">ADMIN PASSWORD</label><input id="adminPassword" type="password" autocomplete="current-password" placeholder="Password from server environment">
+<div class="admin-grid"><div><label for="keyLabel">LABEL (OPTIONAL)</label><input id="keyLabel" type="text" placeholder="Tester / customer"></div><div><label for="days">EXPIRES IN DAYS</label><input id="days" type="number" min="1" max="3650" value="7"></div></div>
+<button class="primary copy" id="adminLogin">CONNECT ADMIN</button><div id="adminMessage" class="message" role="status"></div>
+<div id="adminTools" class="hidden"><button class="primary copy" id="createKey">GENERATE NEW KEY</button><div id="newKey" class="message" role="status"></div><div id="keysList"></div></div>
+<p class="note">Keep the admin password private. The full access key is shown once when created; the database stores only its hash.</p>
+</section>
+<p class="smallprint">Official in-game settings only. No game-file modifications, injectors, scripts, or anti-cheat bypasses. A third-party tool cannot guarantee a ban-free outcome.</p>
+<footer><span>PHANTOM PROJECT · V2.0</span><span>ACCESS SYSTEM</span></footer>
+</main>
+<script>
+const settings=[["General",180],["Red Dot",175],["2x Scope",165],["4x Scope",150],["Sniper Scope",100],["Free Look",140]];
+const list=document.getElementById("settingsList");
+settings.forEach(([name,value],i)=>{const row=document.createElement("div");row.className="setting";row.innerHTML=`<div class="setting-top"><label for="range${i}">${name.toUpperCase()}</label><span class="value" id="val${i}">${value}</span></div><input id="range${i}" type="range" min="0" max="200" value="${value}"><div class="range-labels"><span>0</span><span>100</span><span>200</span></div>`;list.append(row);row.querySelector("input").addEventListener("input",e=>document.getElementById("val"+i).textContent=e.target.value)});
+const $=id=>document.getElementById(id);
+function message(id,text,good=false){const el=$(id);el.className="message show "+(good?"good":"bad");el.textContent=text}
+function pane(access){$("accessPane").classList.toggle("hidden",!access);$("settingsPane").classList.toggle("hidden",access);$("accessTab").classList.toggle("active",access);$("settingsTab").classList.toggle("active",!access)}
+$("accessTab").onclick=()=>pane(true);
+$("settingsTab").onclick=()=>{if(sessionStorage.getItem("phantomAccess")==="ok")pane(false);else{pane(true);message("keyMessage","Validate an active access key before opening settings.")}};
+$("unlock").onclick=async()=>{const key=$("key").value.trim();if(!key){message("keyMessage","Please enter your access key.");return}try{const r=await fetch("/api/validate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({key})});const d=await r.json();if(d.ok){sessionStorage.setItem("phantomAccess","ok");message("keyMessage","Access granted. Expires: "+new Date(d.expiresAt).toLocaleString(),true);pane(false)}else{sessionStorage.removeItem("phantomAccess");message("keyMessage",d.message||"Access denied.")}}catch{message("keyMessage","Cannot reach the server. Host and start the backend first.")}};
+$("copy").onclick=async()=>{const output=settings.map(([name],i)=>`${name}: ${$("range"+i).value}`).join("\n");try{await navigator.clipboard.writeText(output);message("copyMessage","Settings copied to clipboard.",true)}catch{message("copyMessage",output,true)}};
+$("adminLogin").onclick=async()=>{const pw=$("adminPassword").value;if(!pw){message("adminMessage","Enter the admin password.");return}sessionStorage.setItem("phantomAdmin",pw);try{const r=await fetch("/api/admin/keys",{headers:{Authorization:"Bearer "+pw}});const d=await r.json();if(!r.ok)throw Error("Password rejected or server unavailable.");$("adminTools").classList.remove("hidden");message("adminMessage","Admin connected.",true);await loadKeys()}catch(e){sessionStorage.removeItem("phantomAdmin");message("adminMessage",e.message)}};
+async function adminFetch(url,options={}){const pw=sessionStorage.getItem("phantomAdmin");const r=await fetch(url,{...options,headers:{"Content-Type":"application/json",Authorization:"Bearer "+pw,...options.headers}});const d=await r.json();if(!r.ok)throw Error(d.message||"Request failed");return d}
+async function loadKeys(){const d=await adminFetch("/api/admin/keys");const wrap=$("keysList");wrap.replaceChildren();if(!d.keys.length){wrap.textContent="No keys created yet.";return}d.keys.forEach(k=>{const row=document.createElement("div");row.className="keyrow";const title=document.createElement("strong");title.textContent=`#${k.id} · ${k.label||"Unlabelled key"}`;const info=document.createElement("small");info.textContent=`Created ${new Date(k.createdAt).toLocaleString()} · Expires ${new Date(k.expiresAt).toLocaleString()} · ${k.revoked?"REVOKED":Date.parse(k.expiresAt)<=Date.now()?"EXPIRED":"ACTIVE"}`;row.append(title,info);if(!k.revoked&&Date.parse(k.expiresAt)>Date.now()){const b=document.createElement("button");b.className="revoke";b.textContent="REVOKE";b.onclick=async()=>{if(!confirm("Revoke this key?"))return;try{await adminFetch(`/api/admin/keys/${k.id}/revoke`,{method:"POST",body:"{}"});await loadKeys()}catch(e){message("adminMessage",e.message)}};row.append(b)}wrap.append(row)})}
+$("createKey").onclick=async()=>{try{const d=await adminFetch("/api/admin/keys",{method:"POST",body:JSON.stringify({days:Number($("days").value),label:$("keyLabel").value})});$("newKey").className="message show good";$("newKey").replaceChildren();const text=document.createElement("div");text.textContent=`New key (copy now; it will not be shown again): ${d.key}`;const btn=document.createElement("button");btn.className="primary copy";btn.textContent="COPY NEW KEY";btn.onclick=()=>navigator.clipboard.writeText(d.key).then(()=>btn.textContent="COPIED");$("newKey").append(text,btn);await loadKeys()}catch(e){message("adminMessage",e.message)}};
+const params=new URLSearchParams(location.search);if(params.get("admin")==="1")$("adminPane").classList.remove("hidden");
+</script></body></html>
